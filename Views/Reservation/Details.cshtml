@@ -1,0 +1,84 @@
+@model assestment.Models.Reserva
+@{
+    ViewData["Title"] = "Detalle de la reserva";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <h1 class="h3 mb-4">Detalle de la reserva</h1>
+
+            @if (TempData["ReservationSuccess"] != null)
+            {
+                <div class="alert alert-success" role="alert">
+                    @TempData["ReservationSuccess"]
+                </div>
+            }
+
+            <div class="card shadow-sm">
+                @if (!string.IsNullOrEmpty(Model.Inmueble.UrlImagen))
+                {
+                    <img src="@Model.Inmueble.UrlImagen" class="card-img-top" alt="@Model.Inmueble.Titulo"
+                         style="height: 220px; object-fit: cover;" />
+                }
+
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h2 class="h5 mb-0">@Model.Inmueble.Titulo</h2>
+                        @switch (Model.Estado)
+                        {
+                            case "Confirmada":
+                                <span class="badge bg-success">Confirmada</span>
+                                break;
+                            case "Pendiente":
+                                <span class="badge bg-warning text-dark">Pendiente</span>
+                                break;
+                            case "Cancelada":
+                                <span class="badge bg-secondary">Cancelada</span>
+                                break;
+                            case "Completada":
+                                <span class="badge bg-info text-dark">Completada</span>
+                                break;
+                        }
+                    </div>
+
+                    <p class="text-muted small mb-4">
+                        <i class="bi bi-geo-alt"></i> @Model.Inmueble.Ubicacion
+                    </p>
+
+                    <dl class="row mb-0">
+                        <dt class="col-5 text-muted">Check-in</dt>
+                        <dd class="col-7">@Model.FechaInicio.ToString("dd MMM yyyy") &middot; 2:00 PM</dd>
+
+                        <dt class="col-5 text-muted">Check-out</dt>
+                        <dd class="col-7">@Model.FechaFin.ToString("dd MMM yyyy") &middot; 12:00 PM</dd>
+
+                        <dt class="col-5 text-muted">Noches</dt>
+                        <dd class="col-7">@(Model.FechaFin.DayNumber - Model.FechaInicio.DayNumber)</dd>
+
+                        <dt class="col-5 text-muted">Tarifa por noche</dt>
+                        <dd class="col-7">@Model.Inmueble.TarifaPorNoche.ToString("C0")</dd>
+
+                        <dt class="col-5 text-muted fw-semibold">Total</dt>
+                        <dd class="col-7 fw-semibold">@Model.PrecioTotal.ToString("C0")</dd>
+                    </dl>
+
+                    @if (Model.Estado == "Pendiente" || Model.Estado == "Confirmada")
+                    {
+                        <form method="post" asp-controller="Reservation" asp-action="Cancel"
+                              asp-route-id="@Model.Id" class="mt-4">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-outline-danger w-100">
+                                Cancelar reserva
+                            </button>
+                        </form>
+                    }
+                </div>
+            </div>
+
+            <a asp-controller="Reservation" asp-action="MyReservations" class="btn btn-link mt-3 ps-0">
+                &larr; Volver a mis reservas
+            </a>
+        </div>
+    </div>
+</div>

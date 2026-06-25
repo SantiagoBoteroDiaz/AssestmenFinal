@@ -1,0 +1,39 @@
+@model assestment.Dto.Login.AuthUserDto
+@{
+    ViewData["Title"] = "Iniciar sesión";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <h1 class="h3 mb-4 text-center">Iniciar sesión</h1>
+
+            @if (TempData["LoginError"] != null)
+            {
+                <div class="alert alert-danger" role="alert">
+                    @TempData["LoginError"]
+                </div>
+            }
+
+            <form method="post" asp-controller="Auth" asp-action="Login">
+                @Html.AntiForgeryToken()
+                <div class="mb-3">
+                    <label for="Email" class="form-label">Correo electrónico</label>
+                    <input type="email" id="Email" name="Email" value="@Model?.Email"
+                           class="form-control" required autofocus />
+                </div>
+                <div class="mb-3">
+                    <label for="Password" class="form-label">Contraseña</label>
+                    <input type="password" id="Password" name="Password"
+                           class="form-control" required />
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Iniciar sesión</button>
+            </form>
+
+            <p class="text-center text-muted mt-3 mb-0">
+                ¿No tienes cuenta?
+                <a asp-controller="Auth" asp-action="Register">Regístrate aquí</a>
+            </p>
+        </div>
+    </div>
+</div>

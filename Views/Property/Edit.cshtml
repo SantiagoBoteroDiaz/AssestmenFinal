@@ -1,0 +1,83 @@
+@model assestment.Dto.Property.PropertyDto
+@{
+    ViewData["Title"] = "Editar inmueble";
+    var propertyId = ViewBag.PropertyId;
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <h1 class="h3 mb-4">Editar inmueble</h1>
+
+            @if (TempData["EditError"] != null)
+            {
+                <div class="alert alert-danger" role="alert">
+                    @TempData["EditError"]
+                </div>
+            }
+
+            <form method="post" asp-controller="Property" asp-action="Edit" asp-route-id="@propertyId">
+                @Html.AntiForgeryToken()
+
+                <div class="mb-3">
+                    <label for="Title" class="form-label">Título</label>
+                    <input type="text" id="Title" name="Title" value="@Model.Title"
+                           class="form-control" required autofocus />
+                </div>
+
+                <div class="mb-3">
+                    <label for="Description" class="form-label">Descripción</label>
+                    <textarea id="Description" name="Description" class="form-control"
+                              rows="4" required>@Model.Description</textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="Locate" class="form-label">Ubicación</label>
+                    <input type="text" id="Locate" name="Locate" value="@Model.Locate"
+                           class="form-control" required />
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="Latitude" class="form-label">Latitud</label>
+                        <input type="number" id="Latitude" name="Latitude" value="@Model.Latitude"
+                               class="form-control" step="0.000001" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="Length" class="form-label">Longitud</label>
+                        <input type="number" id="Length" name="Length" value="@Model.Length"
+                               class="form-control" step="0.000001" />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="Rate" class="form-label">Tarifa por noche</label>
+                    <input type="number" id="Rate" name="Rate" value="@Model.Rate"
+                           class="form-control" step="0.01" min="0.01" required />
+                </div>
+                
+                <div class="form-check mb-4">
+                    <input type="checkbox" id="IsActive" name="IsActive" class="form-check-input"
+                           value="true" checked="@Model.IsActive" />
+                    <input type="hidden" name="IsActive" value="false" />
+                    <label for="IsActive" class="form-check-label">
+                        Inmueble activo (visible en el catálogo)
+                    </label>
+                </div>
+
+                <div class="mb-4">
+                    <label for="UrlImagen" class="form-label">URL de la foto principal</label>
+                    <input type="url" id="UrlImagen" name="UrlImagen" value="@Model.UrlImagen"
+                           class="form-control" placeholder="https://..." />
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary flex-grow-1">Guardar cambios</button>
+                    <a asp-controller="Property" asp-action="MyProperties" class="btn btn-outline-secondary">
+                        Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

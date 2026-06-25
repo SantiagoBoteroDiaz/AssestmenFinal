@@ -1,0 +1,74 @@
+@model assestment.Models.KycVerification
+@{
+    ViewData["Title"] = "Verificación de identidad";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <h1 class="h3 mb-2">Verificación de identidad</h1>
+            <p class="text-muted mb-4">
+                Para completar tu primera reserva, necesitamos confirmar tu identidad.
+                Toma una foto clara de tu cédula.
+            </p>
+
+            @if (TempData["KycSuccess"] != null)
+            {
+                <div class="alert alert-success" role="alert">
+                    @TempData["KycSuccess"]
+                </div>
+            }
+
+            @if (TempData["KycError"] != null)
+            {
+                <div class="alert alert-danger" role="alert">
+                    @TempData["KycError"]
+                </div>
+            }
+
+            @if (Model != null)
+            {
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="h6 mb-2">Estado actual</h2>
+                        @if (Model.Estado == "Aprobado")
+                        {
+                            <span class="badge bg-success">Verificado</span>
+                            <p class="text-muted small mt-2 mb-0">
+                                Ya puedes completar reservas sin restricciones.
+                            </p>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">No verificado</span>
+                            <p class="text-muted small mt-2 mb-0">
+                                Intenta de nuevo con una foto más clara de tu documento.
+                            </p>
+                        }
+                    </div>
+                </div>
+            }
+
+            @if (Model == null || Model.Estado != "Aprobado")
+            {
+                <form method="post" asp-controller="Kyc" asp-action="Verify" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-3">
+                        <label for="documentImage" class="form-label">Foto de tu cédula</label>
+                        <input type="file" id="documentImage" name="documentImage"
+                               accept="image/*" capture="environment"
+                               class="form-control" required />
+                        <div class="form-text">
+                            Asegúrate de que el documento esté bien iluminado y todo el texto sea legible.
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        Verificar identidad
+                    </button>
+                </form>
+            }
+        </div>
+    </div>
+</div>

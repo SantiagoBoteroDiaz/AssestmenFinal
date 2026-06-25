@@ -1,0 +1,79 @@
+@model assestment.ViewModels.Property.CatalogViewModel
+@{
+    ViewData["Title"] = "Explorar alojamientos";
+}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Explorar alojamientos</h1>  
+    </div>
+    <form method="get" asp-action="Index" class="row g-2 align-items-end mb-4 p-3 bg-light rounded">
+        <div class="col-md-4">
+            <label for="ubicacion" class="form-label small text-muted mb-1">Ubicación</label>
+            <input type="text" id="ubicacion" name="ubicacion" value="@Model.Ubicacion"
+                   class="form-control" placeholder="Ciudad o zona" />
+        </div>
+        <div class="col-md-3">
+            <label for="fechaInicio" class="form-label small text-muted mb-1">Check-in</label>
+            <input type="date" id="fechaInicio" name="fechaInicio" value="@Model.FechaInicio?.ToString("yyyy-MM-dd")"
+                   class="form-control" />
+        </div>
+        <div class="col-md-3">
+            <label for="fechaFin" class="form-label small text-muted mb-1">Check-out</label>
+            <input type="date" id="fechaFin" name="fechaFin" value="@Model.FechaFin?.ToString("yyyy-MM-dd")"
+                   class="form-control" />
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Buscar</button>
+        </div>
+    </form>
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-warning" role="alert">
+            @Model.ErrorMessage
+        </div>
+    }
+    @if (!Model.Properties.Any())
+    {
+        <div class="text-center py-5">
+            <p class="text-muted fs-5 mb-1">No encontramos alojamientos disponibles para esta búsqueda.</p>
+            <p class="text-muted">Intenta ajustar las fechas o la ubicación.</p>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var inmueble in Model.Properties)
+            {
+                <div class="col-12 col-md-6 col-lg-4">
+                    <a asp-controller="Property" asp-action="Details" asp-route-id="@inmueble.Id"
+                       class="card h-100 text-decoration-none text-reset shadow-sm">
+                        @if (!string.IsNullOrEmpty(inmueble.UrlImagen))
+                        {
+                            <img src="@inmueble.UrlImagen" class="card-img-top" alt="@inmueble.Titulo"
+                                 style="height: 180px; object-fit: cover;" />
+                        }
+                        else
+                        {
+                            <div class="bg-light d-flex align-items-center justify-content-center"
+                                 style="height: 180px;">
+                                <span class="text-muted small">Sin foto disponible</span>
+                            </div>
+                        }
+                        <div class="card-body">
+                            <h2 class="h5 card-title mb-1">@inmueble.Titulo</h2>
+                            <p class="text-muted small mb-2">
+                                <i class="bi bi-geo-alt"></i> @inmueble.Ubicacion
+                            </p>
+                            <p class="card-text text-truncate" style="max-height: 3.2rem; overflow: hidden;">
+                                @inmueble.Descripcion
+                            </p>
+                            <p class="fw-semibold mb-0">
+                                @inmueble.TarifaPorNoche.ToString("C0") <span class="text-muted small fw-normal">/ noche</span>
+                            </p>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    }
+</div>

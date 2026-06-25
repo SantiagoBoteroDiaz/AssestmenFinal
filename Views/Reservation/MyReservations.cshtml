@@ -1,0 +1,99 @@
+@model ICollection<assestment.Models.Reserva>
+@{
+    ViewData["Title"] = "Mis reservas";
+}
+
+<div class="container py-4">
+    <h1 class="h3 mb-4">Mis reservas</h1>
+
+    @if (TempData["ReservationSuccess"] != null)
+    {
+        <div class="alert alert-success" role="alert">
+            @TempData["ReservationSuccess"]
+        </div>
+    }
+
+    @if (TempData["ReservationError"] != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @TempData["ReservationError"]
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <p class="text-muted fs-5 mb-1">Aún no tienes reservas.</p>
+            <p class="text-muted mb-3">Explora el catálogo y reserva tu próximo alojamiento.</p>
+            <a asp-controller="Property" asp-action="Index" class="btn btn-primary">
+                Explorar alojamientos
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var reserva in Model.OrderByDescending(r => r.FechaCreacion))
+            {
+                <div class="col-12 col-md-6">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h2 class="h5 card-title mb-0">@reserva.Inmueble.Titulo</h2>
+                                @switch (reserva.Estado)
+                                {
+                                    case "Confirmada":
+                                        <span class="badge bg-success">Confirmada</span>
+                                        break;
+                                    case "Pendiente":
+                                        <span class="badge bg-warning text-dark">Pendiente</span>
+                                        break;
+                                    case "Cancelada":
+                                        <span class="badge bg-secondary">Cancelada</span>
+                                        break;
+                                    case "Completada":
+                                        <span class="badge bg-info text-dark">Completada</span>
+                                        break;
+                                }
+                            </div>
+
+                            <p class="text-muted small mb-2">
+                                <i class="bi bi-geo-alt"></i> @reserva.Inmueble.Ubicacion
+                            </p>
+
+                            <p class="mb-1">
+                                <i class="bi bi-calendar-event"></i>
+                                @reserva.FechaInicio.ToString("dd MMM yyyy") &rarr; @reserva.FechaFin.ToString("dd MMM yyyy")
+                            </p>
+                            <p class="text-muted small mb-3">
+                                Check-in 2:00 PM &middot; Check-out 12:00 PM
+                            </p>
+
+                            <p class="fw-semibold mb-3">
+                                @reserva.PrecioTotal.ToString("C0")
+                            </p>
+
+                            <div class="d-flex gap-2">
+                                <a asp-controller="Reservation" asp-action="Details" asp-route-id="@reserva.Id"
+                                   class="btn btn-outline-secondary btn-sm flex-grow-1">
+                                    Ver detalle
+                                </a>
+
+                                @if (reserva.Estado == "Pendiente" || reserva.Estado == "Confirmada")
+                                {
+                                    <form method="post" asp-controller="Reservation" asp-action="Cancel"
+                                          asp-route-id="@reserva.Id" class="flex-grow-1">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-outline-danger btn-sm w-100">
+                                            Cancelar
+                                        </button>
+                                    </form>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

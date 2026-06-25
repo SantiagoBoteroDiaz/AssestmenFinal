@@ -1,0 +1,127 @@
+@model assestment.Dto.Property.DashboardResumenDto
+@{
+    ViewData["Title"] = "Panel de rendimiento";
+    var fechaInicio = (DateOnly)ViewBag.FechaInicio;
+    var fechaFin = (DateOnly)ViewBag.FechaFin;
+}
+
+<div class="container py-4">
+    <h1 class="h3 mb-4">Panel de rendimiento</h1>
+
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @ViewBag.ErrorMessage
+        </div>
+    }
+
+    <form method="get" asp-action="Index" class="row g-2 align-items-end mb-4 p-3 bg-light rounded">
+        <div class="col-md-4">
+            <label for="fechaInicio" class="form-label small text-muted mb-1">Desde</label>
+            <input type="date" id="fechaInicio" name="fechaInicio" value="@fechaInicio.ToString("yyyy-MM-dd")"
+                   class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label for="fechaFin" class="form-label small text-muted mb-1">Hasta</label>
+            <input type="date" id="fechaFin" name="fechaFin" value="@fechaFin.ToString("yyyy-MM-dd")"
+                   class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-primary w-100">Actualizar</button>
+        </div>
+    </form>
+
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <p class="text-muted small mb-1">Ingresos totales</p>
+                    <p class="h4 mb-0">@Model.IngresosTotales.ToString("C0")</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <p class="text-muted small mb-1">Tasa de ocupación promedio</p>
+                    <p class="h4 mb-0">@Model.TasaOcupacionPromedio.ToString("P0")</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <p class="text-muted small mb-1">Reservas en el periodo</p>
+                    <p class="h4 mb-0">@Model.TotalReservas</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="h5 mb-3">Rendimiento por inmueble</h2>
+
+    @if (!Model.PorInmueble.Any())
+    {
+        <p class="text-muted">No hay datos de reservas para el periodo seleccionado.</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>Inmueble</th>
+                        <th class="text-end">Ingresos</th>
+                        <th class="text-end">Noches reservadas</th>
+                        <th class="text-end">Ocupación</th>
+                        <th class="text-end">Reservas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.PorInmueble)
+                    {
+                        <tr>
+                            <td>
+                                <a asp-controller="Property" asp-action="Details" asp-route-id="@item.PropertyId">
+                                    @item.Titulo
+                                </a>
+                            </td>
+                            <td class="text-end">@item.Ingresos.ToString("C0")</td>
+                            <td class="text-end">@item.NochesReservadas / @item.NochesDisponibles</td>
+                            <td class="text-end">@item.TasaOcupacion.ToString("P0")</td>
+                            <td class="text-end">@item.TotalReservas</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    <div class="d-flex gap-2 mb-4">
+        <a asp-controller="Dashboard" asp-action="ExportExcel" class="btn btn-outline-success">
+            <i class="bi bi-file-earmark-excel"></i> Descargar portafolio completo
+        </a>
+
+        @if (Model.PorInmueble.Any())
+        {
+            <div class="dropdown">
+                <button class="btn btn-outline-success dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    Descargar por inmueble
+                </button>
+                <ul class="dropdown-menu">
+                    @foreach (var item in Model.PorInmueble)
+                    {
+                        <li>
+                            <a class="dropdown-item" asp-controller="Dashboard" asp-action="ExportExcel"
+                               asp-route-propertyId="@item.PropertyId">
+                                @item.Titulo
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
+    </div>
+    <a asp-controller="Property" asp-action="MyProperties" class="btn btn-link ps-0 mt-3">
+        &larr; Volver a mis inmuebles
+    </a>
+</div>
