@@ -1,0 +1,38 @@
+# Compilación .NET
+bin/
+obj/
+out/
+Debug/
+Release/
+
+# Visual Studio / Rider / VS Code
+.vs/
+.idea/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Logs
+*.log
+logs/
+
+# Archivos temporales
+*.tmp
+*.temp
+*.cache
+
+# Configuración sensible
+.env
+appsettings.Development.json
+appsettings.Local.json
+appsettings.*.local.json
+
+# Publicación
+publish/
+artifacts/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
